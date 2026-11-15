@@ -63,8 +63,6 @@ class Cliente:
 
         self._correo = valor.strip()
 
-    
-
     def mostrar_informacion(self):
         """Devuelve los datos del cliente en un texto."""
         return (
@@ -73,6 +71,8 @@ class Cliente:
             f"Correo: {self.correo} | "
             f"Teléfono: {self.telefono}"
         )
+
+        
  class Servicio(ABC):
     """Contrato abstracto común para los servicios de Software FJ."""
 
