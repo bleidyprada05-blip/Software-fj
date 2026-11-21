@@ -11,17 +11,25 @@ logger = logging.getLogger(__name__)
 
 ERRORES = (ErrorFJ, ValueError, TypeError)
 
-clientes = {}
-reservas = {}
-servicios = {
-    servicio.identificador: servicio
-    for servicio in (
-        ReservaSala("S001", "Sala Norte", 50000, 12, ["Proyector", "Pizarra"]),
-        AlquilerEquipo("S002", "Portátil", 30000, 5),
-        Asesoria("S003", "Asesoría técnica", 80000, "desarrollo", "Luis Gómez"),
-    )
-}
+clientes = []
+reservas = []
+servicios = [
+    ReservaSala("S001", "Sala Norte", 50000, 12, ["Proyector", "Pizarra"]),
+    AlquilerEquipo("S002", "Portátil", 30000, 5),
+    Asesoria("S003", "Asesoría técnica", 80000, "desarrollo", "Luis Gómez"),
+]
 
+
+def buscar_por_identificador(elementos, identificador):
+    """Busca en una lista un objeto cuyo identificador coincida."""
+    return next(
+        (
+            elemento
+            for elemento in elementos
+            if elemento.identificador == identificador
+        ),
+        None,
+    )
 #Muestra el error al usuario y lo deja registrado en el log
 def mostrar_error(error):
     logger.warning("Operación rechazada: %s", error)
@@ -43,7 +51,7 @@ def registrar_cliente():
         cliente = Cliente(
             input("ID: "), input("Nombre: "), input("Correo: "), input("Teléfono: ")
         )
-        clientes[cliente.identificador] = cliente
+        clientes.append(cliente)
         print("Cliente registrado.")
     except ERRORES as error:
         mostrar_error(error)
@@ -52,28 +60,36 @@ def registrar_cliente():
 def listar_clientes():
     if not clientes:
         print("No hay clientes registrados.")
-    for cliente in clientes.values():
+    for cliente in clientes:
         print(cliente.mostrar_informacion())
 
 
 #VerificaServicios
 def ver_servicios():
-    for servicio in servicios.values():
+    for servicio in servicios:
         print(f"[{servicio.identificador}] {servicio.describir()}")
 
 
 #CreaReserva
 def crear_reserva():
     try:
-        cliente = clientes.get(input("ID del cliente: ").strip())
-        servicio = servicios.get(input("ID del servicio: ").strip().upper())
+        cliente = buscar_por_identificador(
+            clientes, input("ID del cliente: ").strip()
+        )
+        servicio = buscar_por_identificador(
+            servicios, input("ID del servicio: ").strip().upper()
+        )
+
         if cliente is None or servicio is None:
             print("Cliente o servicio no encontrado.")
             return
+
         duracion = leer_numero("Duración (horas o días): ")
         unidades = 1
+
         if isinstance(servicio, AlquilerEquipo):
             unidades = leer_numero("Unidades a alquilar: ", int)
+
         impuesto = leer_numero("Impuesto % [0]: ", float, 0)
         descuento = leer_numero("Descuento % [0]: ", float, 0)
 
@@ -81,17 +97,21 @@ def crear_reserva():
         reserva = Reserva(
             identificador, cliente, servicio, duracion, unidades, impuesto, descuento
         )
-        reservas[identificador] = reserva
+        reservas.append(reserva)
         print(reserva.mostrar_informacion())
+
     except ERRORES as error:
         mostrar_error(error)
 
 
 def gestionar_reserva(accion):
-    reserva = reservas.get(input("ID de la reserva: ").strip().upper())
+    reserva = buscar_por_identificador(
+        reservas, input("ID de la reserva: ").strip().upper()
+    )
     if reserva is None:
         print("Reserva no encontrada.")
         return
+
     try:
         if accion == "confirmar":
             print(f"Reserva confirmada. Costo: {reserva.confirmar():.2f}")
@@ -105,7 +125,7 @@ def gestionar_reserva(accion):
 def listar_reservas():
     if not reservas:
         print("No hay reservas registradas.")
-    for reserva in reservas.values():
+    for reserva in reservas:
         print(reserva.mostrar_informacion())
 
 #Pruebas

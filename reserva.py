@@ -4,16 +4,10 @@ import logging
 
 from cliente import Cliente
 from servicio import AlquilerEquipo, Servicio
+from excepciones import ErrorReserva, EstadoReservaError
 
 logger = logging.getLogger(__name__)
 
-
-
-class ErrorReserva(Exception):
-    """Error base para las operaciones de reserva."""
-
-class EstadoReservaError(ErrorReserva):
-    """Error por intentar una operación no permitida en el estado actual."""
 
 class Reserva:
     """Conecta un cliente con un servicio y administra su reserva."""

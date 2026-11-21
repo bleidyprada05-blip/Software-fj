@@ -1,20 +1,29 @@
-#Excepciones personalizadas 
+"""Excepciones personalizadas del sistema Software FJ."""
 
-#Excepción base: atrapándola se cubren todos los errores del sistema.
+
 class ErrorFJ(Exception):
-    
-#Clientes
+    """Excepción base para los errores controlados del sistema."""
+
+
 class ClienteInvalidoError(ErrorFJ):
-  
-#ServiciosInvalidos
+    """Datos inválidos de un cliente."""
+
+
 class ServicioInvalidoError(ErrorFJ):
+    """Datos inválidos de un servicio."""
 
-#ServiciosNoDisponible
+
 class ServicioNoDisponibleError(ErrorFJ):
+    """El servicio o recurso solicitado no está disponible."""
 
-#ReservaInvalidos
+
 class ReservaInvalidaError(ErrorFJ):
+    """Datos inválidos de una reserva."""
 
-#OperacionNoPermitida
-class EstadoReservaError(ErrorFJ):
-   
+
+class ErrorReserva(ReservaInvalidaError):
+    """Error ocurrido durante una operación de reserva."""
+
+
+class EstadoReservaError(ErrorReserva):
+    """Operación no permitida según el estado de la reserva."""
